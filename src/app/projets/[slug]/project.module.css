@@ -1,0 +1,388 @@
+.page {
+  min-height: 100svh;
+  padding: 0 var(--page-padding) clamp(80px, 9vw, 120px);
+  background: var(--background);
+}
+
+.loading {
+  min-height: 100svh;
+  display: grid;
+  place-items: center;
+  color: var(--muted);
+  font-family: var(--font-mono);
+}
+
+.header {
+  width: min(1240px, 100%);
+  min-height: 86px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  border-bottom: 1px solid var(--border);
+}
+
+.identity,
+.back {
+  color: var(--text);
+  text-decoration: none;
+}
+
+.identity {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  font-size: 0.82rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.identity > span {
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  color: #fff;
+  background: var(--accent);
+  font-family: var(--font-mono);
+  font-weight: 700;
+}
+
+.back {
+  color: var(--muted);
+  font-size: 0.88rem;
+  transition: color 160ms ease;
+}
+
+.back:hover {
+  color: var(--accent);
+}
+
+.repository {
+  width: min(1180px, 100%);
+  margin: 0 auto;
+  padding-top: clamp(52px, 7vw, 86px);
+}
+
+.repoHeading {
+  padding-bottom: 30px;
+}
+
+.repoPath {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  color: var(--accent);
+  font-size: clamp(1.15rem, 2.2vw, 1.65rem);
+}
+
+.repoPath h1 {
+  margin: 0;
+  font: inherit;
+  font-weight: 700;
+}
+
+.repoIcon {
+  margin-right: 4px;
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 0.8em;
+}
+
+.separator {
+  color: var(--muted);
+}
+
+.visibility {
+  margin-left: 8px;
+  padding: 3px 9px;
+  border: 1px solid var(--border-strong);
+  border-radius: 999px;
+  color: var(--muted);
+  font-size: 0.67rem;
+  font-weight: 650;
+}
+
+.repoHeading > p {
+  max-width: 720px;
+  margin: 16px 0 0;
+  color: var(--muted);
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+.repoNav {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  border-bottom: 1px solid var(--border);
+}
+
+.repoNav span {
+  position: relative;
+  padding: 13px 16px;
+  color: var(--muted);
+  font-size: 0.86rem;
+  white-space: nowrap;
+}
+
+.repoNav .activeTab {
+  color: var(--text);
+  font-weight: 650;
+}
+
+.repoNav .activeTab::after {
+  position: absolute;
+  right: 12px;
+  bottom: -1px;
+  left: 12px;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--accent);
+  content: "";
+}
+
+.branchBar {
+  min-height: 54px;
+  margin-top: 24px;
+  padding: 10px 14px;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 18px;
+  border: 1px solid var(--border);
+  border-radius: 8px 8px 0 0;
+  background: var(--surface);
+  color: var(--muted);
+  font-size: 0.78rem;
+}
+
+.branch {
+  padding: 6px 10px;
+  border: 1px solid var(--border-strong);
+  border-radius: 6px;
+  color: var(--text);
+  background: var(--background);
+  font-family: var(--font-mono);
+}
+
+.commit {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.commit strong {
+  color: var(--text);
+  font-weight: 600;
+}
+
+.repoLayout {
+  margin-top: 24px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 280px;
+  align-items: start;
+  gap: 28px;
+}
+
+.readme {
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+}
+
+.readmeTitle {
+  padding: 14px 18px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-bottom: 1px solid var(--border);
+  color: var(--text);
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  font-weight: 650;
+}
+
+.readmeBody {
+  padding: clamp(24px, 4vw, 46px);
+}
+
+.readmeBody h2 {
+  margin: 0 0 28px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border);
+  color: var(--text);
+  font-size: clamp(2rem, 4vw, 3.35rem);
+  letter-spacing: -0.045em;
+}
+
+.visual {
+  margin: 0 0 42px;
+}
+
+.cover {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  background: var(--background);
+}
+
+.cover img {
+  object-fit: cover;
+}
+
+.cover > span {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: var(--accent);
+  font-family: var(--font-mono);
+  font-size: clamp(5rem, 14vw, 10rem);
+}
+
+.readmeBody h3 {
+  margin: 0 0 18px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+  color: var(--text);
+  font-size: clamp(1.35rem, 2.5vw, 1.8rem);
+}
+
+.readmeBody p {
+  margin: 0;
+  color: var(--text);
+  font-size: 1rem;
+  line-height: 1.8;
+  white-space: pre-line;
+}
+
+.sidebar {
+  display: grid;
+  gap: 28px;
+}
+
+.sidebar section {
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--border);
+}
+
+.sidebar h2 {
+  margin: 0 0 14px;
+  color: var(--text);
+  font-size: 0.98rem;
+}
+
+.sidebar p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.88rem;
+  line-height: 1.65;
+}
+
+.links {
+  margin-top: 20px;
+  display: grid;
+  gap: 10px;
+}
+
+.links a {
+  color: var(--text);
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.links a span {
+  width: 20px;
+  display: inline-block;
+  color: var(--accent);
+  font-family: var(--font-mono);
+}
+
+.links a:hover {
+  color: var(--accent);
+}
+
+.details {
+  margin: 0;
+  display: grid;
+  gap: 11px;
+  color: var(--muted);
+  font-size: 0.78rem;
+}
+
+.details div {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.details dt,
+.details dd {
+  margin: 0;
+}
+
+.details dd {
+  color: var(--text);
+  text-align: right;
+}
+
+.statusDot {
+  width: 7px;
+  height: 7px;
+  display: inline-block;
+  border-radius: 50%;
+  background: #3fb950;
+}
+
+@media (max-width: 850px) {
+  .repoLayout {
+    grid-template-columns: 1fr;
+  }
+
+  .sidebar {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 600px) {
+  .header {
+    min-height: 78px;
+  }
+
+  .identity strong,
+  .commitDate {
+    display: none;
+  }
+
+  .repository {
+    padding-top: 42px;
+  }
+
+  .branchBar {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+
+  .repoLayout {
+    margin-top: 16px;
+  }
+
+  .sidebar {
+    grid-template-columns: 1fr;
+  }
+
+  .readmeBody {
+    padding: 22px;
+  }
+
+  .cover {
+    aspect-ratio: 4 / 3;
+  }
+}

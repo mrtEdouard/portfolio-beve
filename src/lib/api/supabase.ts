@@ -8,8 +8,10 @@ import {
   projectSchema,
   projectSkillSchema,
   skillSchema,
+  slugSchema,
   type PortfolioData,
   type PortfolioPage,
+  type Project,
 } from "./schemas";
 
 const envSchema = z.object({
@@ -105,10 +107,33 @@ export async function getPages(): Promise<PortfolioPage[]> {
   });
 }
 
+// Récupère uniquement les projets publiés, puis valide toute la réponse avec Zod.
+export async function getProjects(): Promise<Project[]> {
+  return fetchTable("projects", tableSchemas.projects, {
+    published_at: "not.is.null",
+    order: "published_at.desc",
+  });
+}
+
+// Valide le paramètre d'URL avant de rechercher un projet publié par son slug.
+export async function getProjectBySlug(slug: string): Promise<Project | null> {
+  const parsedSlug = slugSchema.safeParse(slug);
+
+  if (!parsedSlug.success) return null;
+
+  const projects = await fetchTable("projects", tableSchemas.projects, {
+    slug: `eq.${parsedSlug.data}`,
+    published_at: "not.is.null",
+    limit: "1",
+  });
+
+  return projects[0] ?? null;
+}
+
 export async function getPortfolioData(): Promise<PortfolioData> {
   const [pages, projects, skills, projectSkills, articles] = await Promise.all([
     getPages(),
-    fetchTable("projects", tableSchemas.projects),
+    getProjects(),
     fetchTable("skills", tableSchemas.skills),
     fetchTable("project_skills", tableSchemas.project_skills),
     fetchTable("articles", tableSchemas.articles),

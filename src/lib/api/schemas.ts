@@ -5,13 +5,18 @@ const idSchema = z.number().int().positive();
 const dateSchema = z.string().datetime({ offset: true });
 const nullableDateSchema = dateSchema.nullable();
 const nullableUrlSchema = z.string().url().nullable();
+export const slugSchema = z
+  .string()
+  .min(1)
+  .max(100)
+  .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/);
 
 // Forme attendue d'une ligne de la table « pages ».
 export const pageSchema = z.object({
   id: idSchema,
   created_at: dateSchema,
   title: z.string().min(1),
-  slug: z.string().min(1),
+  slug: slugSchema,
   content: z.string(),
   published_at: nullableDateSchema,
 });
@@ -21,7 +26,7 @@ export const projectSchema = z.object({
   id: idSchema,
   created_at: dateSchema,
   title: z.string().min(1),
-  slug: z.string().min(1),
+  slug: slugSchema,
   summary: z.string(),
   description: z.string(),
   cover_url: nullableUrlSchema,
@@ -51,7 +56,7 @@ export const articleSchema = z.object({
   id: idSchema,
   created_at: dateSchema,
   title: z.string().min(1),
-  slug: z.string().min(1),
+  slug: slugSchema,
   excerpt: z.string(),
   content: z.string(),
   cover_url: nullableUrlSchema,
