@@ -9,6 +9,7 @@ import {
   projectSkillSchema,
   skillSchema,
   type PortfolioData,
+  type PortfolioPage,
 } from "./schemas";
 
 const envSchema = z.object({
@@ -49,10 +50,15 @@ function getSupabaseConfig() {
 async function fetchTable<TData>(
   table: keyof typeof tableSchemas,
   schema: z.ZodType<TData>,
+  query: Record<string, string> = {},
 ): Promise<TData> {
   const { url, key } = getSupabaseConfig();
   const endpoint = new URL(`/rest/v1/${table}`, url);
   endpoint.searchParams.set("select", "*");
+
+  for (const [key, value] of Object.entries(query)) {
+    endpoint.searchParams.set(key, value);
+  }
 
   const response = await fetch(endpoint, {
     headers: {
@@ -91,9 +97,17 @@ async function fetchTable<TData>(
   return parsed.data;
 }
 
+// Récupère uniquement les pages publiées, puis valide toute la réponse avec Zod.
+export async function getPages(): Promise<PortfolioPage[]> {
+  return fetchTable("pages", tableSchemas.pages, {
+    published_at: "not.is.null",
+    order: "id.asc",
+  });
+}
+
 export async function getPortfolioData(): Promise<PortfolioData> {
   const [pages, projects, skills, projectSkills, articles] = await Promise.all([
-    fetchTable("pages", tableSchemas.pages),
+    getPages(),
     fetchTable("projects", tableSchemas.projects),
     fetchTable("skills", tableSchemas.skills),
     fetchTable("project_skills", tableSchemas.project_skills),

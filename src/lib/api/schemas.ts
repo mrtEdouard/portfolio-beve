@@ -1,10 +1,12 @@
 import { z } from "zod";
 
+// Validations communes réutilisées dans plusieurs tables.
 const idSchema = z.number().int().positive();
 const dateSchema = z.string().datetime({ offset: true });
 const nullableDateSchema = dateSchema.nullable();
 const nullableUrlSchema = z.string().url().nullable();
 
+// Forme attendue d'une ligne de la table « pages ».
 export const pageSchema = z.object({
   id: idSchema,
   created_at: dateSchema,
@@ -14,6 +16,7 @@ export const pageSchema = z.object({
   published_at: nullableDateSchema,
 });
 
+// Forme attendue d'une ligne de la table « projects ».
 export const projectSchema = z.object({
   id: idSchema,
   created_at: dateSchema,
@@ -28,6 +31,7 @@ export const projectSchema = z.object({
   published_at: nullableDateSchema,
 });
 
+// Forme attendue d'une compétence.
 export const skillSchema = z.object({
   id: idSchema,
   created_at: dateSchema,
@@ -36,11 +40,13 @@ export const skillSchema = z.object({
   level: z.string().min(1),
 });
 
+// Table de liaison entre les projets et leurs compétences.
 export const projectSkillSchema = z.object({
   project_id: idSchema,
   skill_id: idSchema,
 });
 
+// Forme attendue d'un article.
 export const articleSchema = z.object({
   id: idSchema,
   created_at: dateSchema,
@@ -53,6 +59,7 @@ export const articleSchema = z.object({
   published_at: nullableDateSchema,
 });
 
+// Validation de toutes les collections retournées par l'API du portfolio.
 export const portfolioDataSchema = z.object({
   pages: z.array(pageSchema),
   projects: z.array(projectSchema),
@@ -61,6 +68,7 @@ export const portfolioDataSchema = z.object({
   articles: z.array(articleSchema),
 });
 
+// Types TypeScript automatiquement déduits des schémas Zod.
 export type PortfolioPage = z.infer<typeof pageSchema>;
 export type Project = z.infer<typeof projectSchema>;
 export type Skill = z.infer<typeof skillSchema>;
