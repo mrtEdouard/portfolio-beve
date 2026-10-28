@@ -5,6 +5,7 @@ import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { useEffect, useMemo, useRef, useState } from "react";
 import * as THREE from "three";
 import type { Skill } from "@/lib/api/schemas";
+import { useThemeStore } from "@/stores/theme-store";
 import styles from "./skills.module.css";
 
 type SceneSkill = Pick<Skill, "id" | "name" | "category" | "level">;
@@ -60,8 +61,8 @@ function getStarTexture() {
       const dx = (x / (size - 1)) * 2 - 1;
       const dy = (y / (size - 1)) * 2 - 1;
       const distance = Math.sqrt(dx * dx + dy * dy);
-      const core = Math.exp(-distance * 15);
-      const glow = Math.exp(-distance * 4.2) * 0.68;
+      const core = Math.exp(-distance * 11);
+      const glow = Math.exp(-distance * 3.7) * 0.7;
       const horizontalRay = Math.exp(-Math.abs(dy) * 48) * Math.exp(-Math.abs(dx) * 3.4);
       const verticalRay = Math.exp(-Math.abs(dx) * 48) * Math.exp(-Math.abs(dy) * 3.4);
       const alpha = Math.min(1, core + glow + (horizontalRay + verticalRay) * 0.42);
@@ -107,9 +108,11 @@ function getRingTexture() {
   return sharedRingTexture;
 }
 
-function categoryColor(index: number, total: number) {
+function categoryColor(index: number, total: number, lightMode: boolean) {
   const hue = 205 + (index * 250) / Math.max(total, 1);
-  return `#${new THREE.Color().setHSL((hue % 360) / 360, 0.76, 0.7).getHexString()}`;
+  return `#${new THREE.Color()
+    .setHSL((hue % 360) / 360, lightMode ? 0.72 : 0.76, lightMode ? 0.44 : 0.7)
+    .getHexString()}`;
 }
 
 function createSeededRandom(initialSeed: number) {
@@ -125,11 +128,13 @@ function SkillNode({
   active,
   onSelect,
   reduceMotion,
+  lightMode,
 }: {
   point: SkillStar;
   active: boolean;
   onSelect: (skill: SceneSkill) => void;
   reduceMotion: boolean;
+  lightMode: boolean;
 }) {
   const star = useRef<THREE.Sprite>(null);
   const ring = useRef<THREE.Sprite>(null);
@@ -143,11 +148,11 @@ function SkillNode({
       : (Math.sin(state.clock.elapsedTime * 2.1 + point.id * 1.73) + 1) / 2;
 
     if (!star.current || !ring.current || !ringMaterial.current) return;
-    const target = active ? point.size * 1.45 : point.size;
+    const target = active ? point.size * 1.3 : point.size;
     star.current.scale.lerp(new THREE.Vector3(target, target, 1), 0.12);
-    const ringScale = point.size * (active ? 2.75 + pulse * 0.28 : 2.25 + pulse * 0.22);
+    const ringScale = point.size * (active ? 1.38 + pulse * 0.07 : 1.18 + pulse * 0.05);
     ring.current.scale.set(ringScale, ringScale, 1);
-    ringMaterial.current.opacity = active ? 0.78 + pulse * 0.2 : 0.38 + pulse * 0.3;
+    ringMaterial.current.opacity = active ? 0.58 + pulse * 0.12 : 0.28 + pulse * 0.14;
   });
 
   return (
@@ -155,7 +160,7 @@ function SkillNode({
       <sprite
         ref={ring}
         position={point.position}
-        scale={[point.size * 2.3, point.size * 2.3, 1]}
+        scale={[point.size * 1.25, point.size * 1.25, 1]}
         onPointerOver={(event) => {
           event.stopPropagation();
           document.body.style.cursor = "pointer";
@@ -175,7 +180,7 @@ function SkillNode({
           color={point.color}
           transparent
           opacity={0.5}
-          blending={THREE.AdditiveBlending}
+          blending={lightMode ? THREE.NormalBlending : THREE.AdditiveBlending}
           depthWrite={false}
           toneMapped={false}
         />
@@ -203,7 +208,7 @@ function SkillNode({
           color={point.color}
           transparent
           opacity={active ? 1 : 0.94}
-          blending={THREE.AdditiveBlending}
+          blending={lightMode ? THREE.NormalBlending : THREE.AdditiveBlending}
           depthWrite={false}
           toneMapped={false}
         />
@@ -212,7 +217,15 @@ function SkillNode({
   );
 }
 
-function GalaxyParticles({ count, reduceMotion }: { count: number; reduceMotion: boolean }) {
+function GalaxyParticles({
+  count,
+  reduceMotion,
+  lightMode,
+}: {
+  count: number;
+  reduceMotion: boolean;
+  lightMode: boolean;
+}) {
   const galaxy = useRef<THREE.Points>(null);
   const material = useRef<THREE.ShaderMaterial>(null);
   const uniforms = useMemo(
@@ -228,9 +241,9 @@ function GalaxyParticles({ count, reduceMotion }: { count: number; reduceMotion:
     const positionData = new Float32Array(count * 3);
     const colorData = new Float32Array(count * 3);
     const phaseData = new Float32Array(count);
-    const coreColor = new THREE.Color("#fff3dc");
-    const middleColor = new THREE.Color("#9eb7ff");
-    const edgeColor = new THREE.Color("#7c55d9");
+    const coreColor = new THREE.Color(lightMode ? "#183b78" : "#fff3dc");
+    const middleColor = new THREE.Color(lightMode ? "#315efb" : "#9eb7ff");
+    const edgeColor = new THREE.Color(lightMode ? "#6941c6" : "#7c55d9");
     const branches = 5;
 
     for (let index = 0; index < count; index += 1) {
@@ -258,7 +271,7 @@ function GalaxyParticles({ count, reduceMotion }: { count: number; reduceMotion:
     }
 
     return { positions: positionData, colors: colorData, phases: phaseData };
-  }, [count]);
+  }, [count, lightMode]);
 
   useFrame((state, delta) => {
     if (material.current) {
@@ -281,7 +294,7 @@ function GalaxyParticles({ count, reduceMotion }: { count: number; reduceMotion:
         vertexShader={galaxyVertexShader}
         fragmentShader={galaxyFragmentShader}
         transparent
-        blending={THREE.AdditiveBlending}
+        blending={lightMode ? THREE.NormalBlending : THREE.AdditiveBlending}
         depthWrite={false}
         toneMapped={false}
       />
@@ -294,11 +307,13 @@ function SkillsGalaxy({
   activeId,
   onSelect,
   reduceMotion,
+  lightMode,
 }: {
   points: SkillStar[];
   activeId: number;
   onSelect: (skill: SceneSkill) => void;
   reduceMotion: boolean;
+  lightMode: boolean;
 }) {
   const galaxyGroup = useRef<THREE.Group>(null);
   const canvasWidth = useThree((state) => state.size.width);
@@ -321,13 +336,18 @@ function SkillsGalaxy({
   return (
     <group rotation={[0.98, 0, 0.12]} scale={responsiveScale}>
       <group ref={galaxyGroup}>
-        <GalaxyParticles count={Math.min(6200, 4200 + points.length * 180)} reduceMotion={reduceMotion} />
+        <GalaxyParticles
+          count={Math.min(6200, 4200 + points.length * 180)}
+          reduceMotion={reduceMotion}
+          lightMode={lightMode}
+        />
         {points.map((point) => (
           <SkillNode
             point={point}
             active={point.id === activeId}
             onSelect={onSelect}
             reduceMotion={reduceMotion}
+            lightMode={lightMode}
             key={point.id}
           />
         ))}
@@ -339,6 +359,8 @@ function SkillsGalaxy({
 export function SkillsScene({ skills }: { skills: SceneSkill[] }) {
   const [activeSkillId, setActiveSkillId] = useState(skills[0].id);
   const [reduceMotion, setReduceMotion] = useState(false);
+  const theme = useThemeStore((state) => state.theme);
+  const lightMode = theme === "light";
 
   const categories = useMemo(
     () => Array.from(new Set(skills.map((skill) => skill.category))),
@@ -347,7 +369,7 @@ export function SkillsScene({ skills }: { skills: SceneSkill[] }) {
 
   const points = useMemo<SkillStar[]>(() => {
     const total = Math.max(skills.length, 1);
-    const starSize = Math.max(0.66, 0.86 - Math.max(total - 10, 0) * 0.008);
+    const starSize = Math.max(0.76, 0.98 - Math.max(total - 10, 0) * 0.008);
 
     return skills.map((skill, index) => {
       const progress = (index + 1) / (total + 1);
@@ -360,7 +382,7 @@ export function SkillsScene({ skills }: { skills: SceneSkill[] }) {
 
       return {
         ...skill,
-        color: categoryColor(categoryIndex, categories.length),
+        color: categoryColor(categoryIndex, categories.length, lightMode),
         size: starSize,
         position: [
           Math.cos(angle) * radius,
@@ -369,7 +391,7 @@ export function SkillsScene({ skills }: { skills: SceneSkill[] }) {
         ],
       };
     });
-  }, [categories, skills]);
+  }, [categories, lightMode, skills]);
 
   useEffect(() => {
     const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -391,19 +413,22 @@ export function SkillsScene({ skills }: { skills: SceneSkill[] }) {
           dpr={[1, 1.55]}
           gl={{ alpha: true, antialias: true, powerPreference: "high-performance" }}
         >
-          <Sparkles
-            count={Math.min(48, 18 + skills.length)}
-            scale={[6, 4.5, 3.5]}
-            size={0.9}
-            speed={reduceMotion ? 0 : 0.08}
-            opacity={0.3}
-            color="#dce5ff"
-          />
+          {!lightMode && (
+            <Sparkles
+              count={Math.min(48, 18 + skills.length)}
+              scale={[6, 4.5, 3.5]}
+              size={0.9}
+              speed={reduceMotion ? 0 : 0.08}
+              opacity={0.3}
+              color="#dce5ff"
+            />
+          )}
           <SkillsGalaxy
             points={points}
             activeId={activeSkill.id}
             onSelect={(skill) => setActiveSkillId(skill.id)}
             reduceMotion={reduceMotion}
+            lightMode={lightMode}
           />
           <OrbitControls
             enablePan={false}

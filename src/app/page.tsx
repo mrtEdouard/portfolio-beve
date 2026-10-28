@@ -79,10 +79,11 @@ export default async function Home() {
         ["skills", "competences"].includes(page.slug) ||
         /skills|compétences/i.test(page.title),
     ) ?? null;
+  const contactEmail = process.env.NEXT_PUBLIC_CONTACT_EMAIL?.trim() || null;
 
   return (
     <>
-      <Navbar pages={navigationPages} />
+      <Navbar pages={navigationPages} contactEmail={contactEmail} />
       <main className={styles.main}>
         <Hero pages={terminalPages} />
         <About page={aboutPage} />

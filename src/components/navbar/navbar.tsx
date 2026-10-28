@@ -14,15 +14,17 @@ type NavbarPage = {
 
 type NavbarProps = {
   pages: NavbarPage[];
+  contactEmail: string | null;
 };
 
-export function Navbar({ pages }: NavbarProps) {
+export function Navbar({ pages, contactEmail }: NavbarProps) {
   // Switch pour ouvrir / fermer le burger menu
   const [menuOpen, setMenuOpen] = useState(false);
 
   // Switch pour le thème clair / sombre. Le thème est stocké dans un Zustand store.
   const theme = useThemeStore((state) => state.theme);
   const toggleTheme = useThemeStore((state) => state.toggleTheme);
+  const contactPage = pages.find((page) => page.slug === "contact");
 
   // Réhydratation dans le local storage pour que le thème choisi soit conservé entre les sessions.
   useEffect(() => {
@@ -65,20 +67,36 @@ export function Navbar({ pages }: NavbarProps) {
           className={`${styles.links} ${menuOpen ? styles.linksOpen : ""}`}
           id="mobile-navigation"
         >
-          {pages.map((page) => (
-            <a
-              href={`#${page.slug}`}
-              key={page.id}
-              // Referme automatiquement le menu après le choix d'une section.
-              onClick={() => setMenuOpen(false)}
-            >
-              {page.title}
-            </a>
-          ))}
+          {pages
+            .filter((page) => page.slug !== "contact")
+            .map((page) => (
+              <a
+                href={`#${page.slug}`}
+                key={page.id}
+                // Referme automatiquement le menu après le choix d'une section.
+                onClick={() => setMenuOpen(false)}
+              >
+                {page.title}
+              </a>
+            ))}
         </div>
 
         {/* Boutons d'action : changement de thème et ouverture du menu mobile. */}
         <div className={styles.actions}>
+          {contactPage && (
+            <a
+              className={styles.contactButton}
+              href={`mailto:${contactEmail ?? ""}`}
+              aria-label="Contacter Edouard Mouret par e-mail"
+            >
+              <span>{contactPage.title}</span>
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <rect x="3" y="5" width="18" height="14" rx="2" />
+                <path d="m4 7 8 6 8-6" />
+              </svg>
+            </a>
+          )}
+
           <button
             className={styles.themeButton}
             type="button"

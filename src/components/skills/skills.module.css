@@ -179,3 +179,49 @@
     padding: 10px 13px;
   }
 }
+
+:global(:root[data-theme="light"]) .skills {
+  background-color: #edf3fa;
+  background-image: url("/images/skills-day-sky.webp");
+}
+
+:global(:root[data-theme="light"]) .skills::before {
+  background:
+    linear-gradient(90deg, rgba(248, 250, 252, 0.78), rgba(239, 245, 251, 0.34) 48%, rgba(236, 243, 250, 0.08)),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.12), rgba(220, 230, 241, 0.28));
+}
+
+:global(:root[data-theme="light"]) .skills::after {
+  background: linear-gradient(
+    to bottom,
+    var(--background) 0%,
+    rgba(242, 241, 235, 0.78) 28%,
+    rgba(242, 246, 251, 0) 100%
+  );
+}
+
+:global(:root[data-theme="light"]) .heading h2 {
+  color: #111827;
+}
+
+:global(:root[data-theme="light"]) .heading p {
+  color: #4b5563;
+}
+
+:global(:root[data-theme="light"]) .sceneFrame {
+  background: radial-gradient(circle at 50% 48%, rgba(255, 255, 255, 0.05), rgba(196, 210, 226, 0.15) 58%, transparent 78%);
+}
+
+:global(:root[data-theme="light"]) .skillTooltip {
+  border-left-color: #315efb;
+  background: rgba(248, 250, 252, 0.84);
+  box-shadow: 0 12px 35px rgba(44, 62, 86, 0.12);
+}
+
+:global(:root[data-theme="light"]) .skillTooltip strong {
+  color: #111827;
+}
+
+:global(:root[data-theme="light"]) .skillTooltip small {
+  color: #556070;
+}
