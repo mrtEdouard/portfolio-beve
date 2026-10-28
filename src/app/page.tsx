@@ -1,5 +1,6 @@
 import { Navbar } from "@/components/navbar/navbar";
 import { Hero } from "@/components/hero/hero";
+import { About } from "@/components/about/about";
 import { getPages, PortfolioApiError } from "@/lib/api/supabase";
 import styles from "./home.module.css";
 
@@ -33,11 +34,14 @@ export default async function Home() {
     content,
   }));
 
+  const aboutPage = pages.find((page) => page.slug === "a-propos") ?? null;
+
   return (
     <>
       <Navbar pages={navigationPages} />
       <main className={styles.main}>
         <Hero pages={terminalPages} />
+        <About page={aboutPage} />
       </main>
     </>
   );
