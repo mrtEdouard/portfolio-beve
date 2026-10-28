@@ -12,6 +12,7 @@ import {
   type PortfolioData,
   type PortfolioPage,
   type Project,
+  type Skill,
 } from "./schemas";
 
 const envSchema = z.object({
@@ -115,6 +116,13 @@ export async function getProjects(): Promise<Project[]> {
   });
 }
 
+// Récupère les compétences triées par catégorie et valide la réponse avec Zod.
+export async function getSkills(): Promise<Skill[]> {
+  return fetchTable("skills", tableSchemas.skills, {
+    order: "category.asc,name.asc",
+  });
+}
+
 // Valide le paramètre d'URL avant de rechercher un projet publié par son slug.
 export async function getProjectBySlug(slug: string): Promise<Project | null> {
   const parsedSlug = slugSchema.safeParse(slug);
@@ -134,7 +142,7 @@ export async function getPortfolioData(): Promise<PortfolioData> {
   const [pages, projects, skills, projectSkills, articles] = await Promise.all([
     getPages(),
     getProjects(),
-    fetchTable("skills", tableSchemas.skills),
+    getSkills(),
     fetchTable("project_skills", tableSchemas.project_skills),
     fetchTable("articles", tableSchemas.articles),
   ]);

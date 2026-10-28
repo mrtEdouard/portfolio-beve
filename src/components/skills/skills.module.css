@@ -1,0 +1,181 @@
+.skills {
+  position: relative;
+  isolation: isolate;
+  min-height: 100svh;
+  padding: clamp(85px, 8vw, 120px) var(--page-padding);
+  display: flex;
+  align-items: center;
+  background-color: #02040a;
+  background-image: url("/images/skills-night-sky.webp");
+  background-position: center;
+  background-size: cover;
+  scroll-margin-top: 85px;
+}
+
+.skills::before {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background:
+    linear-gradient(90deg, rgba(2, 4, 10, 0.74) 0%, rgba(2, 4, 10, 0.38) 40%, rgba(2, 4, 10, 0.12) 75%),
+    linear-gradient(180deg, rgba(2, 4, 10, 0.12), rgba(2, 4, 10, 0.38));
+  content: "";
+}
+
+.skills::after {
+  position: absolute;
+  inset: 0 0 auto;
+  z-index: 0;
+  height: clamp(130px, 15vw, 230px);
+  background: linear-gradient(
+    to bottom,
+    var(--background) 0%,
+    rgba(14, 16, 21, 0.82) 28%,
+    rgba(2, 4, 10, 0) 100%
+  );
+  content: "";
+  pointer-events: none;
+}
+
+.inner {
+  position: relative;
+  z-index: 1;
+  width: min(1320px, 100%);
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: minmax(280px, 0.62fr) minmax(500px, 1.38fr);
+  align-items: center;
+  gap: clamp(36px, 7vw, 110px);
+}
+
+.heading > div {
+  display: block;
+}
+
+.heading h2 {
+  margin: 0;
+  color: #f4f6ff;
+  font-size: var(--section-title-size);
+  font-weight: 750;
+  letter-spacing: -0.055em;
+  line-height: 1;
+}
+
+.heading p {
+  max-width: 410px;
+  margin: 28px 0 0;
+  color: #bbc3d8;
+  font-size: 1rem;
+  line-height: 1.7;
+  white-space: pre-line;
+}
+
+.visualization {
+  height: min(66svh, 640px);
+  min-height: 460px;
+  min-width: 0;
+}
+
+.sceneLoader,
+.sceneFrame {
+  width: 100%;
+  height: 100%;
+}
+
+.sceneLoader {
+  background: radial-gradient(circle, rgba(65, 91, 190, 0.13), transparent 48%);
+  opacity: 0.65;
+}
+
+.sceneFrame {
+  position: relative;
+  overflow: hidden;
+  background: radial-gradient(circle at 50% 48%, rgba(8, 12, 25, 0.06), rgba(3, 5, 12, 0.22) 52%, transparent 76%);
+}
+
+.canvas {
+  position: absolute;
+  inset: 0;
+}
+
+.skillTooltip {
+  position: absolute;
+  bottom: 44px;
+  left: 50%;
+  z-index: 2;
+  display: grid;
+  grid-template-columns: auto auto;
+  align-items: center;
+  gap: 3px 12px;
+  min-width: 220px;
+  padding: 12px 16px;
+  border-left: 2px solid var(--accent);
+  background: rgba(2, 4, 10, 0.72);
+  backdrop-filter: blur(10px);
+  text-align: center;
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+
+.skillTooltip > span {
+  width: 9px;
+  height: 9px;
+  grid-row: 1 / 3;
+  border-radius: 50%;
+  box-shadow: 0 0 14px var(--accent);
+}
+
+.skillTooltip strong {
+  color: #f4f6ff;
+  font-size: 1rem;
+  text-align: left;
+}
+
+.skillTooltip small {
+  color: #bbc3d8;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  text-align: left;
+  white-space: nowrap;
+}
+
+@media (max-width: 900px) {
+  .skills {
+    padding-block: clamp(90px, 14vw, 120px);
+    background-position: center;
+  }
+
+  .skills::before {
+    background: linear-gradient(180deg, rgba(2, 4, 10, 0.48), rgba(2, 4, 10, 0.16) 48%, rgba(2, 4, 10, 0.52));
+  }
+
+  .skills::after {
+    height: 120px;
+  }
+
+  .inner {
+    grid-template-columns: 1fr;
+    gap: 36px;
+  }
+
+  .heading p {
+    max-width: 620px;
+  }
+
+  .visualization {
+    height: 430px;
+    min-height: 0;
+  }
+}
+
+@media (max-width: 420px) {
+  .visualization {
+    height: 360px;
+  }
+
+  .skillTooltip {
+    bottom: 18px;
+    min-width: 200px;
+    padding: 10px 13px;
+  }
+}

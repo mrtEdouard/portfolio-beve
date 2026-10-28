@@ -2,7 +2,13 @@ import { Navbar } from "@/components/navbar/navbar";
 import { Hero } from "@/components/hero/hero";
 import { About } from "@/components/about/about";
 import { Projects } from "@/components/projects/projects";
-import { getPages, getProjects, PortfolioApiError } from "@/lib/api/supabase";
+import { Skills } from "@/components/skills/skills";
+import {
+  getPages,
+  getProjects,
+  getSkills,
+  PortfolioApiError,
+} from "@/lib/api/supabase";
 import styles from "./home.module.css";
 
 export const dynamic = "force-dynamic";
@@ -10,10 +16,12 @@ export const dynamic = "force-dynamic";
 export default async function Home() {
   let pages: Awaited<ReturnType<typeof getPages>> = [];
   let projects: Awaited<ReturnType<typeof getProjects>> = [];
+  let skills: Awaited<ReturnType<typeof getSkills>> = [];
 
-  const [pagesResult, projectsResult] = await Promise.allSettled([
+  const [pagesResult, projectsResult, skillsResult] = await Promise.allSettled([
     getPages(),
     getProjects(),
+    getSkills(),
   ]);
 
   if (pagesResult.status === "fulfilled") {
@@ -39,6 +47,17 @@ export default async function Home() {
     );
   }
 
+  if (skillsResult.status === "fulfilled") {
+    skills = skillsResult.value;
+  } else {
+    const error = skillsResult.reason;
+    console.error(
+      error instanceof PortfolioApiError
+        ? error.message
+        : "Impossible de récupérer les compétences Supabase.",
+    );
+  }
+
   // On transmet au composant client uniquement les champs nécessaires au menu.
   const navigationPages = pages.map(({ id, title, slug }) => ({
     id,
@@ -54,6 +73,12 @@ export default async function Home() {
   }));
 
   const aboutPage = pages.find((page) => page.slug === "a-propos") ?? null;
+  const skillsPage =
+    pages.find(
+      (page) =>
+        ["skills", "competences"].includes(page.slug) ||
+        /skills|compétences/i.test(page.title),
+    ) ?? null;
 
   return (
     <>
@@ -62,6 +87,7 @@ export default async function Home() {
         <Hero pages={terminalPages} />
         <About page={aboutPage} />
         <Projects projects={projects} />
+        <Skills page={skillsPage} skills={skills} />
       </main>
     </>
   );

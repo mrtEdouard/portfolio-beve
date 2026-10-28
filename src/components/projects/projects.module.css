@@ -1,6 +1,5 @@
 .projects {
-  min-height: 100svh;
-  padding: clamp(110px, 12vw, 160px) var(--page-padding);
+  padding: clamp(90px, 9vw, 130px) var(--page-padding);
   display: flex;
   align-items: center;
   background: var(--background);
