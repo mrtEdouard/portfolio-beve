@@ -1,4 +1,5 @@
 import { Navbar } from "@/components/navbar/navbar";
+import { Hero } from "@/components/hero/hero";
 import { getPages, PortfolioApiError } from "@/lib/api/supabase";
 import styles from "./home.module.css";
 
@@ -25,10 +26,19 @@ export default async function Home() {
     slug,
   }));
 
+  const terminalPages = pages.map(({ id, title, slug, content }) => ({
+    id,
+    title,
+    slug,
+    content,
+  }));
+
   return (
     <>
       <Navbar pages={navigationPages} />
-      <main className={styles.main} />
+      <main className={styles.main}>
+        <Hero pages={terminalPages} />
+      </main>
     </>
   );
 }
