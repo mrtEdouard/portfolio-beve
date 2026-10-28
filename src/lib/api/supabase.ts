@@ -3,6 +3,7 @@ import "server-only";
 import { z } from "zod";
 import {
   articleSchema,
+  experienceSchema,
   pageSchema,
   portfolioDataSchema,
   projectSchema,
@@ -13,6 +14,7 @@ import {
   type PortfolioPage,
   type Project,
   type Skill,
+  type Experience,
 } from "./schemas";
 
 const envSchema = z.object({
@@ -26,6 +28,7 @@ const tableSchemas = {
   skills: z.array(skillSchema),
   project_skills: z.array(projectSkillSchema),
   articles: z.array(articleSchema),
+  experiences: z.array(experienceSchema),
 } as const;
 
 export class PortfolioApiError extends Error {
@@ -120,6 +123,14 @@ export async function getProjects(): Promise<Project[]> {
 export async function getSkills(): Promise<Skill[]> {
   return fetchTable("skills", tableSchemas.skills, {
     order: "category.asc,name.asc",
+  });
+}
+
+// Récupère les expériences publiées dans l'ordre chronologique de la timeline.
+export async function getExperiences(): Promise<Experience[]> {
+  return fetchTable("experiences", tableSchemas.experiences, {
+    published_at: "not.is.null",
+    order: "start_date.asc",
   });
 }
 

@@ -3,7 +3,9 @@ import { Hero } from "@/components/hero/hero";
 import { About } from "@/components/about/about";
 import { Projects } from "@/components/projects/projects";
 import { Skills } from "@/components/skills/skills";
+import { Experiences } from "@/components/experiences/experiences";
 import {
+  getExperiences,
   getPages,
   getProjects,
   getSkills,
@@ -17,12 +19,15 @@ export default async function Home() {
   let pages: Awaited<ReturnType<typeof getPages>> = [];
   let projects: Awaited<ReturnType<typeof getProjects>> = [];
   let skills: Awaited<ReturnType<typeof getSkills>> = [];
+  let experiences: Awaited<ReturnType<typeof getExperiences>> = [];
 
-  const [pagesResult, projectsResult, skillsResult] = await Promise.allSettled([
-    getPages(),
-    getProjects(),
-    getSkills(),
-  ]);
+  const [pagesResult, projectsResult, skillsResult, experiencesResult] =
+    await Promise.allSettled([
+      getPages(),
+      getProjects(),
+      getSkills(),
+      getExperiences(),
+    ]);
 
   if (pagesResult.status === "fulfilled") {
     pages = pagesResult.value;
@@ -58,6 +63,17 @@ export default async function Home() {
     );
   }
 
+  if (experiencesResult.status === "fulfilled") {
+    experiences = experiencesResult.value;
+  } else {
+    const error = experiencesResult.reason;
+    console.error(
+      error instanceof PortfolioApiError
+        ? error.message
+        : "Impossible de récupérer les expériences Supabase.",
+    );
+  }
+
   // On transmet au composant client uniquement les champs nécessaires au menu.
   const navigationPages = pages.map(({ id, title, slug }) => ({
     id,
@@ -79,6 +95,12 @@ export default async function Home() {
         ["skills", "competences"].includes(page.slug) ||
         /skills|compétences/i.test(page.title),
     ) ?? null;
+  const experiencesPage =
+    pages.find(
+      (page) =>
+        ["experience", "experiences"].includes(page.slug) ||
+        /expérience/i.test(page.title),
+    ) ?? null;
   const contactEmail = process.env.NEXT_PUBLIC_CONTACT_EMAIL?.trim() || null;
 
   return (
@@ -87,6 +109,7 @@ export default async function Home() {
       <main className={styles.main}>
         <Hero pages={terminalPages} />
         <About page={aboutPage} />
+        <Experiences page={experiencesPage} experiences={experiences} />
         <Projects projects={projects} />
         <Skills page={skillsPage} skills={skills} />
       </main>

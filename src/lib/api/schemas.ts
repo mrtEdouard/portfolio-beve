@@ -45,6 +45,27 @@ export const skillSchema = z.object({
   level: z.string().min(1),
 });
 
+// Catégories autorisées pour classer les expériences dans la timeline.
+export const experienceTypeSchema = z.enum(["professional", "education", "other"]);
+
+// Forme attendue d'une ligne de la table « experiences ».
+export const experienceSchema = z.object({
+  id: idSchema,
+  created_at: dateSchema,
+  title: z.string().min(1),
+  organization: z.string().min(1),
+  location: z.string().nullable(),
+  start_date: z.string().date(),
+  end_date: z.string().date().nullable(),
+  period_label: z.string().nullable(),
+  current: z.boolean(),
+  type: experienceTypeSchema,
+  description: z.string(),
+  link_url: nullableUrlSchema,
+  link_label: z.string().nullable(),
+  published_at: nullableDateSchema,
+});
+
 // Table de liaison entre les projets et leurs compétences.
 export const projectSkillSchema = z.object({
   project_id: idSchema,
@@ -77,6 +98,8 @@ export const portfolioDataSchema = z.object({
 export type PortfolioPage = z.infer<typeof pageSchema>;
 export type Project = z.infer<typeof projectSchema>;
 export type Skill = z.infer<typeof skillSchema>;
+export type ExperienceType = z.infer<typeof experienceTypeSchema>;
+export type Experience = z.infer<typeof experienceSchema>;
 export type ProjectSkill = z.infer<typeof projectSkillSchema>;
 export type Article = z.infer<typeof articleSchema>;
 export type PortfolioData = z.infer<typeof portfolioDataSchema>;
