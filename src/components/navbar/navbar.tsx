@@ -1,10 +1,80 @@
 "use client";
 
-
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useThemeStore } from "@/stores/theme-store";
 import styles from "./navbar.module.css";
+
+const socialLinks = [
+  {
+    name: "linkedin",
+    label: "LinkedIn",
+    href: "https://www.linkedin.com/in/edouard-mouret-4456862b2/",
+  },
+  {
+    name: "github",
+    label: "GitHub",
+    href: "https://github.com/mrtEdouard",
+  },
+  {
+    name: "instagram",
+    label: "Instagram",
+    href: "https://www.instagram.com/mrt.edouard/",
+  },
+] as const;
+
+type SocialName = (typeof socialLinks)[number]["name"];
+
+function SocialIcon({ name }: { name: SocialName }) {
+  if (name === "linkedin") {
+    return (
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M6.5 8.2V18M6.5 5.5v.1M10.5 18v-5.4a3.2 3.2 0 0 1 6.4 0V18M10.5 8.2V18" />
+      </svg>
+    );
+  }
+
+  if (name === "github") {
+    return (
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M9 19c-4.5 1.4-4.5-2.3-6.3-2.8M15.3 21v-3.5c0-1 .1-1.4-.5-2 2.8-.3 5.7-1.4 5.7-6.2A4.8 4.8 0 0 0 19.2 6 4.5 4.5 0 0 0 19 2.7S18 2.4 15.4 4a12.4 12.4 0 0 0-6.4 0C6.4 2.4 5.4 2.7 5.4 2.7A4.5 4.5 0 0 0 5.2 6 4.8 4.8 0 0 0 4 9.3c0 4.8 2.8 5.9 5.6 6.2-.5.5-.6 1.1-.6 2V21" />
+      </svg>
+    );
+  }
+
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <rect x="3" y="3" width="18" height="18" rx="5" />
+      <circle cx="12" cy="12" r="4" />
+      <circle cx="17.5" cy="6.5" r=".7" className={styles.filledIconPart} />
+    </svg>
+  );
+}
+
+function SocialLinks({ mobile = false }: { mobile?: boolean }) {
+  return (
+    <div
+      className={mobile ? styles.mobileSocials : styles.desktopSocials}
+      role="group"
+      aria-label="Réseaux sociaux"
+    >
+      {socialLinks.map((social) => (
+        <a
+          className={styles.socialLink}
+          href={social.href}
+          target="_blank"
+          rel="noreferrer"
+          aria-label={`Voir le profil ${social.label} d’Edouard Mouret`}
+          title={social.label}
+          key={social.name}
+        >
+          <SocialIcon name={social.name} />
+          {mobile && <span>{social.label}</span>}
+        </a>
+      ))}
+    </div>
+  );
+}
 
 type NavbarPage = {
   id: number;
@@ -79,10 +149,13 @@ export function Navbar({ pages, contactEmail }: NavbarProps) {
                 {page.title}
               </a>
             ))}
+          <SocialLinks mobile />
         </div>
 
         {/* Boutons d'action : changement de thème et ouverture du menu mobile. */}
         <div className={styles.actions}>
+          <SocialLinks />
+
           {contactPage && (
             <a
               className={styles.contactButton}
@@ -133,7 +206,6 @@ export function Navbar({ pages, contactEmail }: NavbarProps) {
         </div>
       </nav>
 
-      
       <div className={styles.waves} aria-hidden="true">
         <svg
           className={`${styles.wave} ${styles.waveBack}`}

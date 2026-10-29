@@ -43,6 +43,72 @@
   text-transform: uppercase;
 }
 
+.socials {
+  margin-top: 28px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 9px;
+}
+
+.socials a {
+  height: 40px;
+  padding: 0 14px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  color: var(--muted);
+  background: color-mix(in srgb, var(--surface) 72%, transparent);
+  font-size: 0.72rem;
+  font-weight: 650;
+  text-decoration: none;
+  backdrop-filter: blur(10px);
+  transition: border-color 160ms ease, color 160ms ease, transform 160ms ease;
+}
+
+.githubStats {
+  padding-left: 9px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  border-left: 1px solid var(--border);
+  color: var(--text);
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.githubStats i {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #3fb950;
+  box-shadow: 0 0 8px rgba(63, 185, 80, 0.75);
+}
+
+.socials a:hover,
+.socials a:focus-visible {
+  border-color: var(--accent);
+  color: var(--text);
+  transform: translateY(-2px);
+}
+
+.socials svg {
+  width: 17px;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.7;
+}
+
+.socials .filledIconPart {
+  fill: currentColor;
+  stroke: none;
+}
+
 .visual {
   position: relative;
   z-index: 1;
@@ -266,6 +332,28 @@
   .copy p {
     max-width: 240px;
     line-height: 1.6;
+  }
+
+  .socials {
+    max-width: 290px;
+  }
+
+  .socials a {
+    height: 38px;
+    padding: 0 11px;
+  }
+
+  .socialLabel {
+    display: none;
+  }
+
+  .githubStats {
+    padding-left: 0;
+    border-left: 0;
+  }
+
+  .followers {
+    display: none;
   }
 
   .visual {

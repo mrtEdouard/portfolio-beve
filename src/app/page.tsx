@@ -4,6 +4,7 @@ import { About } from "@/components/about/about";
 import { Projects } from "@/components/projects/projects";
 import { Skills } from "@/components/skills/skills";
 import { Experiences } from "@/components/experiences/experiences";
+import { getGitHubProfile, GitHubApiError } from "@/lib/api/github";
 import {
   getExperiences,
   getPages,
@@ -13,20 +14,26 @@ import {
 } from "@/lib/api/supabase";
 import styles from "./home.module.css";
 
-export const dynamic = "force-dynamic";
-
 export default async function Home() {
   let pages: Awaited<ReturnType<typeof getPages>> = [];
   let projects: Awaited<ReturnType<typeof getProjects>> = [];
   let skills: Awaited<ReturnType<typeof getSkills>> = [];
   let experiences: Awaited<ReturnType<typeof getExperiences>> = [];
+  let githubProfile: Awaited<ReturnType<typeof getGitHubProfile>> | null = null;
 
-  const [pagesResult, projectsResult, skillsResult, experiencesResult] =
+  const [
+    pagesResult,
+    projectsResult,
+    skillsResult,
+    experiencesResult,
+    githubResult,
+  ] =
     await Promise.allSettled([
       getPages(),
       getProjects(),
       getSkills(),
       getExperiences(),
+      getGitHubProfile(),
     ]);
 
   if (pagesResult.status === "fulfilled") {
@@ -74,6 +81,17 @@ export default async function Home() {
     );
   }
 
+  if (githubResult.status === "fulfilled") {
+    githubProfile = githubResult.value;
+  } else {
+    const error = githubResult.reason;
+    console.error(
+      error instanceof GitHubApiError
+        ? error.message
+        : "Impossible de récupérer les statistiques GitHub.",
+    );
+  }
+
   // On transmet au composant client uniquement les champs nécessaires au menu.
   const navigationPages = pages.map(({ id, title, slug }) => ({
     id,
@@ -107,7 +125,7 @@ export default async function Home() {
     <>
       <Navbar pages={navigationPages} contactEmail={contactEmail} />
       <main className={styles.main}>
-        <Hero pages={terminalPages} />
+        <Hero pages={terminalPages} githubProfile={githubProfile} />
         <About page={aboutPage} />
         <Experiences page={experiencesPage} experiences={experiences} />
         <Projects projects={projects} />
